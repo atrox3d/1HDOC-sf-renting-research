@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import webpage
 import util.logger
 import logging
+from pprint import pprint
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -25,6 +26,32 @@ URL = "https://www.zillow.com/homes/for_rent/1-_beds/?searchQueryState=%7B%22pag
 logger.debug("get webpage")
 webpage = webpage.WebPage(URL, enable_cache=True, filename="zillow.html")
 logger.debug("get html")
-html = webpage.get(update=True)
+html = webpage.get(update=False)
 logger.debug("get soup")
 soup = BeautifulSoup(html, "html.parser")
+cards = soup.select("div.list-card-info")
+records = []
+card: bs4.Tag
+for card in cards:
+    # print(card.prettify())
+    link = card.select_one("a.list-card-link")
+    href = link.get('href') if link else "NO LINK"
+    prefix = "https://www.zillow.com"
+    if not href.startswith(prefix):
+        href = prefix + href
+    # print(href)
+
+    pricediv = card.select_one("div.list-card-price")
+    price = pricediv.getText() if pricediv else "NO PRICE"
+    # print(price)
+
+    addresstag = card.select_one("address.list-card-addr")
+    address = addresstag.getText() if addresstag else "NO ADDRESS"
+    # print(address)
+
+    record = dict(address=address, price=price, link=href)
+    records.append(record)
+    # print(record)
+    # print()
+
+pprint(records, indent=4)
