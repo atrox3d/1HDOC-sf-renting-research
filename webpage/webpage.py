@@ -48,7 +48,7 @@ class WebPage:
         logger.debug(f"{__class__.__name__}: getting page")
         if self.cache.is_enabled():
             if self.cache.is_cached():
-                self.webpage = self.cache.get(update, self.webpage)
+                self.webpage = self.cache.get(update, self.download())
             else:
                 self.webpage = self.download()
                 self.cache.update(self.webpage)

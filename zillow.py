@@ -25,6 +25,6 @@ URL = "https://www.zillow.com/homes/for_rent/1-_beds/?searchQueryState=%7B%22pag
 logger.debug("get webpage")
 webpage = webpage.WebPage(URL, enable_cache=True, filename="zillow.html")
 logger.debug("get html")
-html = webpage.get(update=False)
+html = webpage.get(update=True)
 logger.debug("get soup")
 soup = BeautifulSoup(html, "html.parser")
