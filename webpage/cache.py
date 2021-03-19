@@ -6,7 +6,7 @@ logger.setLevel(logging.DEBUG)
 
 class Cache:
     def __init__(self, filename, enabled):
-        logger.debug(f"{__class__.__name__}: filename={filename}, enabled={enabled}")
+        logger.debug(f"{__class__.__name__}: init(filename={filename}, enabled={enabled})")
         self.filename = filename
         self._enabled = enabled
         self.webpage = ""
