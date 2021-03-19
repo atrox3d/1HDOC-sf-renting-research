@@ -1,6 +1,16 @@
 import bs4
 from bs4 import BeautifulSoup
-from webpage import WebPage
+import webpage
+import util.logger
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+root = util.logger.get_cli_logger()  # add handler with level DEBUG as opposed to lastresort WARNING
+# logger = util.logger.get_cli_logger(__name__)
+# webpage.set_logger(logger.getChild("webpage"))
+# webpage.logger.name = "__main__.carlo"
 
 URL = "https://www.zillow.com/homes/for_rent/1-_beds/?searchQueryState=%7B%22pagination%22%3A%7B%7D%2C" \
       "%22usersSearchTerm%22%3Anull%2C%22mapBounds%22%3A%7B%22west%22%3A-122.56276167822266%2C%22east%22%3A-122" \
@@ -12,10 +22,9 @@ URL = "https://www.zillow.com/homes/for_rent/1-_beds/?searchQueryState=%7B%22pag
       "%22%3A%7B%22max%22%3A872627%7D%2C%22beds%22%3A%7B%22min%22%3A1%7D%7D%2C%22isListVisible%22%3Atrue%2C%22mapZoom" \
       "%22%3A12%7D "
 
-# webpage = get_webpage(URL)
-webpage = WebPage(URL, enable_cache=True, filename="zillow.html")
+logger.debug("get webpage")
+webpage = webpage.WebPage(URL, enable_cache=True, filename="zillow.html")
+logger.debug("get html")
 html = webpage.get(update=False)
+logger.debug("get soup")
 soup = BeautifulSoup(html, "html.parser")
-
-
-

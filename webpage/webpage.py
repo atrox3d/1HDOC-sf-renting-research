@@ -1,16 +1,20 @@
+import logging
 import requests
 from .cache import Cache
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
-# this url does not work due to react
-# URL = "https://www.empireonline.com/movies/features/best-movies-2/"
-# URL = "http://web.archive.org/web/20200322005914/https://www.empireonline.com/movies/features/best-movies-2/"
-# INPUT_FILENAME = "movies.html"
-# OUTPUT_FILENAME = "movies.txt"
+
+# def set_logger(_logger):
+#     global logger
+#     logger = _logger
+
 
 class WebPage:
     def __init__(self, url, enable_cache=False, filename="webpage.html"):
-        print(f"{__class__.__name__}: init(url={url}, enable_cache={enable_cache}, filename={filename})")
+        # logger.debug(f"{__class__.__name__}: init(url={url}, enable_cache={enable_cache}, filename={filename})")
+        logger.debug(f"{__class__.__name__}: init(url={url}, enable_cache={enable_cache}, filename={filename})")
         self.url = url
         # self.enable_cache = enable_cache
         self.cache = Cache(filename, enable_cache)
@@ -24,24 +28,24 @@ class WebPage:
         self.webpage: str = ""
 
     def set_header(self, key, value):
-        print(f"{__class__.__name__}: setting header: {key}={value}")
+        logger.debug(f"{__class__.__name__}: setting header: {key}={value}")
         self.headers.update({key: value})
 
     def set_headers(self, headers: dict):
-        print(f"{__class__.__name__}: setting headers: {headers}")
+        logger.debug(f"{__class__.__name__}: setting headers: {headers}")
         self.headers = headers
 
     def download(self) -> str:
         #
         #   get webpage as text
         #
-        print(f"{__class__.__name__}: downloading {self.url}...")
+        logger.debug(f"{__class__.__name__}: downloading {self.url}...")
         self.response = requests.get(self.url, headers=self.headers)
         self.webpage = self.response.text
         return self.webpage
 
     def get(self, update=False):
-        print(f"{__class__.__name__}: getting page")
+        logger.debug(f"{__class__.__name__}: getting page")
         if self.cache.is_enabled():
             if self.cache.is_cached():
                 self.webpage = self.cache.get(update, self.webpage)
@@ -52,4 +56,3 @@ class WebPage:
             self.webpage = self.download()
 
         return self.webpage
-
