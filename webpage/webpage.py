@@ -1,4 +1,5 @@
 import requests
+from .cache import Cache
 
 
 # this url does not work due to react
@@ -8,9 +9,11 @@ import requests
 # OUTPUT_FILENAME = "movies.txt"
 
 class WebPage:
-    def __init__(self, url, cache=False, filename="webpage.html"):
+    def __init__(self, url, enable_cache=False, filename="webpage.html"):
+        print(f"{__class__.__name__}: init(url={url}, enable_cache={enable_cache}, filename={filename})")
         self.url = url
-        self.cache = cache
+        # self.enable_cache = enable_cache
+        self.cache = Cache(filename, enable_cache)
         self.filename = filename
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1) AppleWebKit/605.1.15 (KHTML, like Gecko) "
@@ -21,62 +24,31 @@ class WebPage:
         self.webpage: str = ""
 
     def set_header(self, key, value):
+        print(f"{__class__.__name__}: setting header: {key}={value}")
         self.headers.update({key: value})
 
     def set_headers(self, headers: dict):
+        print(f"{__class__.__name__}: setting headers: {headers}")
         self.headers = headers
 
     def download(self) -> str:
         #
         #   get webpage as text
         #
+        print(f"{__class__.__name__}: downloading {self.url}...")
         self.response = requests.get(self.url, headers=self.headers)
         self.webpage = self.response.text
         return self.webpage
 
-    def save(self) -> None:
-        #
-        #   save webpage to file
-        #
-        with open(self.filename, "w", encoding="utf-8") as fp:
-            fp.write(self.webpage)
-
-    def load(self) -> str:
-        #
-        #   load webpage from file
-        #
-        with open(self.filename, encoding="utf-8") as fp:
-            self.webpage = fp.read()
-            return self.webpage
-
     def get(self, update=False):
-        file_exists = False
-        try:
-            with open(self.filename):
-                file_exists = True
-        except FileNotFoundError:
-            pass
-
-        if self.cache:
-            if file_exists:
-                if update:
-                    print(f"cache update enabled")
-                    print(f"downloading {self.url}...")
-                    self.webpage = self.download()
-                    print(f"saving {self.url} to {self.filename}...")
-                    self.save()
-                else:
-                    print(f"{self.filename} exists")
-                    print(f"loading {self.url} from {self.filename}...")
-                    self.webpage = self.load()
+        print(f"{__class__.__name__}: getting page")
+        if self.cache.is_enabled():
+            if self.cache.is_cached():
+                self.webpage = self.cache.get(update, self.webpage)
             else:
-                print(f"{self.filename} does not exists")
-                print(f"downloading {self.url}...")
                 self.webpage = self.download()
-                print(f"saving {self.url} to {self.filename}...")
-                self.save()
+                self.cache.update(self.webpage)
         else:
-            print(f"downloading {self.url}...")
             self.webpage = self.download()
 
         return self.webpage
