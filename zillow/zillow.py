@@ -35,33 +35,15 @@ class Zillow:
     def __init__(self, url):
         logger.debug(f"{__class__.__name__}: init(url={url})")
         self.url = url
-        self.webpage: webpage.WebPage = None
-        self.soup: BeautifulSoup = None
-        self.html = ""
-        self.records = []
-
-    def _get_page(self):
-        logger.debug(f"{__class__.__name__}: init WebPage")
         self.webpage = webpage.WebPage(self.url, enable_cache=True, filename="../zillow.html")
-        return self.webpage
-
-    def _get_html(self):
-        logger.debug(f"{__class__.__name__}: getting html")
-        self.html = self.webpage.get(update=False)
-        return self.html
-
-    def _get_soup(self):
-        logger.debug(f"{__class__.__name__}: getting soup")
+        self.html = self.webpage.get_html(update=False)
         self.soup = BeautifulSoup(self.html, "html.parser")
-        return self.soup
+        self.records = []
 
     def scrape(self):
         logger.debug(f"{__class__.__name__}: scraping")
-        self._get_page()
-        self._get_html()
-        self._get_soup()
-        cards = self.soup.select("div.list-card-info")
         self.records = []
+        cards = self.soup.select("div.list-card-info")
         card: bs4.Tag
         for card in cards:
             link = card.select_one("a.list-card-link")
@@ -76,8 +58,8 @@ class Zillow:
             addresstag = card.select_one("address.list-card-addr")
             address = addresstag.getText() if addresstag else "NO ADDRESS"
 
-            record = Record(address=address, price=price, link=href)
-            self.records.append(record)
+            current_record = Record(address=address, price=price, link=href)
+            self.records.append(current_record)
 
         return self.records
 
