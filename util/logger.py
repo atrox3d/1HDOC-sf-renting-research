@@ -22,7 +22,8 @@ def get_cli_logger(
         name=None,
         level="DEBUG",
         set_handler=True,
-        format_sring=f'%(asctime)s | %(levelname)-8s | %(name)-40s | %(message)s',
+        # format_sring=f'%(asctime)s | %(levelname)-8s | %(name)-40s | %(message)s',
+        format_sring=f'%(asctime)s | %(levelname)-8s | %(module)-15s | %(name)-40s | %(message)s',
         output_stream=sys.stderr,
 ) -> logging.Logger:
     """
