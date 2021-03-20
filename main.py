@@ -18,6 +18,7 @@ zillow = Zillow(URL)
 records = zillow.scrape()
 # pprint.pprint(zillow.records, indent=4)
 for record in records:
-    print(record.address)
-    print(record.price)
-    print(record.link)
+    # print(record.address)
+    # print(record.price)
+    # print(record.link)
+    pass

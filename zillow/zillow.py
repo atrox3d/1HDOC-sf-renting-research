@@ -44,6 +44,7 @@ class Zillow:
         logger.debug(f"{__class__.__name__}: scraping")
         self.records = []
         cards = self.soup.select("div.list-card-info")
+        logger.debug(f"{__class__.__name__}: found {len(cards)} cards")
         card: bs4.Tag
         for card in cards:
             link = card.select_one("a.list-card-link")
@@ -51,12 +52,15 @@ class Zillow:
             prefix = "https://www.zillow.com"
             if not href.startswith(prefix):
                 href = prefix + href
+            logger.debug(f"{__class__.__name__}: href = {href}")
 
             pricediv = card.select_one("div.list-card-price")
             price = pricediv.getText() if pricediv else "NO PRICE"
+            logger.debug(f"{__class__.__name__}: price = {price}")
 
             addresstag = card.select_one("address.list-card-addr")
             address = addresstag.getText() if addresstag else "NO ADDRESS"
+            logger.debug(f"{__class__.__name__}: address = {address}")
 
             current_record = Record(address=address, price=price, link=href)
             self.records.append(current_record)
