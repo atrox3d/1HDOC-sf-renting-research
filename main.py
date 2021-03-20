@@ -1,6 +1,8 @@
+import util
 from zillow import Zillow
 import pprint
 
+root = util.logger.get_cli_logger()  # add handler with level DEBUG as opposed to lastresort WARNING
 
 
 URL = "https://www.zillow.com/homes/for_rent/1-_beds/?searchQueryState=%7B%22pagination%22%3A%7B%7D%2C" \
@@ -14,9 +16,9 @@ URL = "https://www.zillow.com/homes/for_rent/1-_beds/?searchQueryState=%7B%22pag
       "%22%3A12%7D "
 
 zillow = Zillow(URL)
-zillow.scrape()
+records = zillow.scrape()
 # pprint.pprint(zillow.records, indent=4)
-for record in zillow.records:
+for record in records:
     print(record.address)
     print(record.price)
     print(record.link)
