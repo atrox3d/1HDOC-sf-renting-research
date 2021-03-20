@@ -54,9 +54,10 @@ class Cache:
             self.webpage = fp.read()
             return self.webpage
 
-    def get(self, update=False, webpage=""):
+    def get(self, update=False, download=None):
         logger.debug(f"{__class__.__name__}: getting page update={update}")
         if update:
+            webpage = download()
             self.update(webpage)
         self.webpage = self.load()
         return self.webpage
